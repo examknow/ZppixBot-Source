@@ -77,7 +77,7 @@ def setup(bot):
     if not bot.memory.contains('last_seen_url'):
         bot.memory['last_seen_url'] = tools.SopelMemory()
 
-    url_finder = re.compile(r'(?u)(%s?(?:http|https|ftp)(?:://\S+))' %
+    url_finder = re.compile(r'(?u)(%s?(?:http|https|ftp)(?:://\S+?)(?=\)|\s|\Z))' %
                             (bot.config.url.exclusion_char), re.IGNORECASE)
 
 
@@ -200,9 +200,12 @@ def find_title(url, verify=True):
         # Need to close the connection because we have not read all
         # the data
         response.close()
-    except requests.exceptions.ConnectionError:
+    except (
+        requests.exceptions.ConnectionError,
+        requests.exceptions.InvalidURL,  # e.g. http:///
+        UnicodeError,  # e.g. http://.example.com
+    ):
         return None
-
     # Some cleanup that I don't really grok, but was in the original, so
     # we'll keep it (with the compiled regexes made global) for now.
     content = title_tag_data.sub(r'<\1title>', content)
