@@ -1,4 +1,13 @@
-# Required dependencies to run ZppixBot modules
-requests
+# dependenices used in production ZppixBot
+certifi
 configparser
 mwclient
+pytz
+PyYAML
+requests
+requests-oauthlib
+sopel
+SQLAlchemy
+update-checker
+xmltodict
+yarl
